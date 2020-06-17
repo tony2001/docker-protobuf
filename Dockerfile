@@ -2,7 +2,7 @@ ARG ALPINE_VERSION=3.10
 ARG GO_VERSION=1.13.4
 ARG GRPC_GATEWAY_VERSION=1.12.2
 ARG GRPC_JAVA_VERSION=1.26.0
-ARG GRPC_VERSION=1.19.1
+ARG GRPC_VERSION=1.29.1
 ARG PROTOC_GEN_GO_VERSION=1.3.2
 ARG PROTOC_GEN_GOGO_VERSION=ba06b47c162d49f2af050fb4c75bcbc86a159d5c
 ARG PROTOC_GEN_LINT_VERSION=0.2.1
@@ -10,7 +10,7 @@ ARG UPX_VERSION=3.96
 
 
 FROM alpine:${ALPINE_VERSION} as protoc_builder
-RUN apk add --no-cache build-base curl automake autoconf libtool git zlib-dev
+RUN apk add --no-cache build-base curl automake autoconf libtool git zlib-dev linux-headers
 
 RUN mkdir -p /out
 
@@ -21,7 +21,7 @@ RUN git clone --recursive --depth=1 -b v${GRPC_VERSION} https://github.com/grpc/
     cd /protobuf && \
     ./autogen.sh && \
     ./configure --prefix=/usr --enable-static=no && \
-    make && \
+    make -j8 && \
     make check && \
     make install && \
     make install DESTDIR=/out && \
